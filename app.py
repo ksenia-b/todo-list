@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+
 app = Flask(__name__)
 
 
@@ -10,7 +13,10 @@ app.config['SECRET_KEY'] = 'SOMESECRETKEY'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+manager = Manager(app)
 
+manager.add_command('db', MigrateCommand)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,5 +68,6 @@ def delete_user():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    manager.run()
+    # app.run(debug=True)
 
