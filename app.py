@@ -82,8 +82,17 @@ def create_user():
 
 
 @app.route('/user/<public_id>', methods=['PUT'])
-def promote_user():
-    return ''
+def promote_user(public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user:
+        return jsonify({'message': 'No user found!'})
+
+    user.admin = True
+    db.admin = True
+    db.session.commit()
+
+    return jsonify({'message': 'The user has been promoted!'})
 
 
 @app.route('/user/<public_id>', methods=['DELETE'])
